@@ -39,7 +39,7 @@
                     <li><input type="text" class="form-control center" placeholder="Llegadas - λ" aria-describedby="basic-addon1" id="lambda"> </li>
                     <li><input type="text" class="form-control center" placeholder="Tiempo Servicio - μ" aria-describedby="basic-addon1" id="miu"></li>
                     <li><input type="text" class="form-control center" placeholder="Num. Canales Abiertos - m" aria-describedby="basic-addon1" id="m"></li>
-                    <li><button type="button" class="btn btn-success" id="go" onclick="hola();">Success</button></li>
+                    <li><button type="button" class="btn btn-success" id="go" onclick="init();">Success</button></li>
 
 
                 </ul>
@@ -49,21 +49,6 @@
     <body>
         <canvas id="demoCanvas" width="500" height="300"></canvas>
     </body>
-
-    <script>
-        function init() {
-            var stage = new createjs.Stage("demoCanvas");
-            var circle = new createjs.Shape();
-            circle.graphics.beginFill("Crimson").drawCircle(0, 0, 50);
-            circle.x = 100;
-            circle.y = 100;
-            stage.addChild(circle);
-            createjs.Tween.get(circle, {loop: false})
-                .to({x: 400}, 1000, createjs.Ease.getPowInOut(4));
-            createjs.Ticker.setFPS(60);
-            createjs.Ticker.addEventListener("tick", stage);
-        }
-    </script>
 
     <script>
 
@@ -126,6 +111,19 @@
         
         var ro = function(lambda, miu, m){
             return lambda / (miu * m);
+        }
+        
+        function init() {
+            var stage = new createjs.Stage("demoCanvas");
+            var circle = new createjs.Shape();
+            circle.graphics.beginFill("Crimson").drawCircle(0, 0, 50);
+            circle.x = 100;
+            circle.y = 100;
+            stage.addChild(circle);
+            createjs.Tween.get(circle, {loop: false})
+                .to({x: 400}, 1000, createjs.Ease.getPowInOut(4));
+            createjs.Ticker.setFPS(60);
+            createjs.Ticker.addEventListener("tick", stage);
         }
     
 
