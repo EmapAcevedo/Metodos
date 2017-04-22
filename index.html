@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8">
+        <title>Metodos Cuantitativos</title>
+        <meta name="Author" content=""/>
+        <script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
+        <script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
+
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+        <link rel="stylesheet" type="text/css" href="style.css">
+
+    </head>
+
+    <!-- Static navbar -->
+    <nav class="navbar navbar-default navbar-static-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Teoria de Colas</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="#">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><input type="text" class="form-control center" placeholder="Llegadas - λ" aria-describedby="basic-addon1" id="lambda"> </li>
+                    <li><input type="text" class="form-control center" placeholder="Tiempo Servicio - μ" aria-describedby="basic-addon1" id="miu"></li>
+                    <li><input type="text" class="form-control center" placeholder="Num. Canales Abiertos - m" aria-describedby="basic-addon1" id="m"></li>
+                    <li><button type="button" class="btn btn-success" id="go" onclick="hola();">Success</button></li>
+
+
+                </ul>
+            </div><!--/.nav-collapse -->
+        </div>
+    </nav>
+    <body>
+        <canvas id="demoCanvas" width="500" height="300"></canvas>
+    </body>
+
+    <script>
+        function init() {
+            var stage = new createjs.Stage("demoCanvas");
+            var circle = new createjs.Shape();
+            circle.graphics.beginFill("Crimson").drawCircle(0, 0, 50);
+            circle.x = 100;
+            circle.y = 100;
+            stage.addChild(circle);
+            createjs.Tween.get(circle, {loop: false})
+                .to({x: 400}, 1000, createjs.Ease.getPowInOut(4));
+            createjs.Ticker.setFPS(60);
+            createjs.Ticker.addEventListener("tick", stage);
+        }
+    </script>
+
+    <script>
+        /*
+        var lambda;
+        var miu;
+        var m;
+*/
+        function rFact(num){
+            if (num === 0){ 
+                return 1; 
+            }else{ 
+                return num * rFact( num - 1 ); 
+            }
+        }
+
+        /*
+        lambda = document.getElementById("lambda").value;
+        miu = document.getElementById("miu").value;
+        m = document.getElementById("m").value;
+        */
+
+        var p0 = function(lambda, miu, m){
+            var sumatoria = 0;
+            var suma;
+            var suma2;
+            var i;
+            
+            for(i = 0; i < m; i++){
+                suma = 1/rFact(i);
+                suma2 = Math.pow(lambda / miu, i);
+                sumatoria += (suma * suma2);
+            }
+            
+
+            return 1 / (sumatoria + ((1/rFact(m)) * Math.pow(lambda/miu, m) * ((m * miu) / ((m * miu) - lambda))));
+        }
+        
+        var l = function(lambda, miu, m){
+            var division;
+            
+            division = (((lambda * miu) * Math.pow(lambda / miu), m)) / ((rFact(m - 1)) * Math.pow((m * miu)- lambda, 2));
+            return (division * p0(lambda,miu,m)) + (lambda / miu);
+        }
+        
+        var w = function(lambda, miu, m){
+            
+            return l(lambda, miu, m) / lambda;
+            
+        }
+        
+        var lq = function(lambda, miu, m){
+            
+            return l(lambda, miu, m) - (lambda / miu);
+            
+        }
+        
+        var wq = function(lambda, miu, m){
+            
+            return w(lambda, miu, m) - (1/ miu);
+            
+        }
+        
+        var ro = function(lambda, miu, m){
+            return lambda / (miu * m);
+        }
+        
+        console.log(ro(5,3,5));
+        
+
+
+
+    </script>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+
+</html>
