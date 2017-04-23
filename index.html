@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <title>Metodos Cuantitativos</title>
         <meta name="Author" content=""/>
-        <script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
+        <script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
         <script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
 
         <!-- Latest compiled and minified CSS -->
@@ -47,7 +47,7 @@
         </div>
     </nav>
     <body>
-        <canvas id="demoCanvas" width="500" height="300"></canvas>
+        <canvas id="demoCanvas" width="1520%" height="650%" ></canvas>
     </body>
 
     <script>
@@ -73,60 +73,82 @@
             var suma;
             var suma2;
             var i;
-            
+
             for(i = 0; i < m; i++){
                 suma = 1/rFact(i);
                 suma2 = Math.pow(lambda / miu, i);
                 sumatoria += (suma * suma2);
             }
-            
+
 
             return 1 / (sumatoria + ((1/rFact(m)) * Math.pow(lambda/miu, m) * ((m * miu) / ((m * miu) - lambda))));
         }
-        
+
         var l = function(lambda, miu, m){
             var division;
-            
+
             division = (((lambda * miu) * Math.pow(lambda / miu), m)) / ((rFact(m - 1)) * Math.pow((m * miu)- lambda, 2));
             return (division * p0(lambda,miu,m)) + (lambda / miu);
         }
-        
+
         var w = function(lambda, miu, m){
-            
+
             return l(lambda, miu, m) / lambda;
-            
+
         }
-        
+
         var lq = function(lambda, miu, m){
-            
+
             return l(lambda, miu, m) - (lambda / miu);
-            
+
         }
-        
+
         var wq = function(lambda, miu, m){
-            
+
             return w(lambda, miu, m) - (1/ miu);
-            
+
         }
-        
+
         var ro = function(lambda, miu, m){
             return lambda / (miu * m);
         }
-        
+
         function init() {
             var stage = new createjs.Stage("demoCanvas");
+            var i;
+            for (i = 0; i < 10; i++){
+                var rect = new createjs.Shape();
+                rect.strokeCmd = rect.graphics.beginFill("black").command;
+                rect.graphics.drawRect(10 + (50 * i), 10, 40, 40);
+                rect.x = 10 + (50 * i);
+                rect.y = 10;
+                rect.name = i + "";
+                stage.addChild(rect);
+            }
+
             var circle = new createjs.Shape();
-            circle.graphics.beginFill("Crimson").drawCircle(0, 0, 50);
-            circle.x = 100;
-            circle.y = 100;
+            circle.graphics.beginFill("DeepSkyBlue").drawCircle(0, 0, 20);
+            circle.x = 15;
+            circle.y = 600;
             stage.addChild(circle);
+            /*
+            var tmp = stage.getChildByName("1");
+            tmp.strokeCmd.style = "blue";
+            console.log(tmp);*/
+            var posicion = 2;
             createjs.Tween.get(circle, {loop: false})
-                .to({x: 400}, 1000, createjs.Ease.getPowInOut(4));
+                .to({x: 400}, 1000, createjs.Ease.getPowInOut(4))
+                .to({x: stage.getChildAt(posicion).x + (50 * posicion) + 30, y: stage.getChildAt(posicion).y + 50 }, 800, createjs.Ease.getPowInOut(2))
+                .call(mierda(posicion));
+            function mierda(posicion){
+                stage.getChildByName(posicion).strokeCmd.style = "red";
+            }
             createjs.Ticker.setFPS(60);
             createjs.Ticker.addEventListener("tick", stage);
+            
         }
-    
-
+        
+        
 
     </script>
 
