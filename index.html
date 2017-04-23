@@ -139,29 +139,41 @@
                 stage.addChild(circle);
             }
 
-            
-            function jsHello(j, posicion) {
+
+            function simulacion(j, posicion) {
                 if (j == 20){
                     return;
                 }else{
                     setTimeout(function () {
-
                         createjs.Tween.get(stage.getChildByName(j), {loop: false})
                             .to({x: 400}, 1000, createjs.Ease.getPowInOut(4))
                             .to({x: stage.getChildAt(posicion).x + (50 * posicion) + 30, y: stage.getChildAt(posicion).y +  75}, 800, createjs.Ease.getPowInOut(2))
-                            .call(mierda(posicion));
-                        function mierda(posicion){
+                            .call(espera(posicion));
+                        function espera(posicion){
                             var tmp;
+                            var stagetmp = stage;
                             tmp = stage.getChildByName(posicion);
-                            tmp.strokeCmd.style = "red";
+                            setTimeout(function(){
+                                tmp.strokeCmd.style = "red";
+                            }, 1500)
+                            setTimeout(function(){
+                                j--;
+                                createjs.Tween.get(stage.getChildByName(j), {loop: false})
+                                    .to({x: stage.getChildAt(posicion).x + (50 * posicion) + 30, y: stage.getChildAt(posicion).y +  75}, 800, createjs.Ease.getPowInOut(2))
+                                    .to({x: 50000, y: 5000}, 800, createjs.Ease.getPowInOut(2))
+                                .call(e());
+                                function e(){
+                                    tmp.strokeCmd.style = "black";
+                                }
+                            }, 3000)
                         }
-                        jsHello(++j, ++posicion);
+                        simulacion(++j, ++posicion);
 
                     }, 1000);
                 }
             }
 
-            jsHello(10,0);
+            simulacion(10,0);
 
             createjs.Ticker.setFPS(60);
             createjs.Ticker.addEventListener("tick", stage);
