@@ -114,8 +114,10 @@
         }
 
         function init() {
+            var arreglositemas = new Array(10);
             var stage = new createjs.Stage("demoCanvas");
             var i;
+            var j;
             for (i = 0; i < 10; i++){
                 var rect = new createjs.Shape();
                 rect.strokeCmd = rect.graphics.beginFill("black").command;
@@ -126,29 +128,46 @@
                 stage.addChild(rect);
             }
 
-            var circle = new createjs.Shape();
-            circle.graphics.beginFill("DeepSkyBlue").drawCircle(0, 0, 20);
-            circle.x = 15;
-            circle.y = 600;
-            stage.addChild(circle);
-            /*
-            var tmp = stage.getChildByName("1");
-            tmp.strokeCmd.style = "blue";
-            console.log(tmp);*/
-            var posicion = 2;
-            createjs.Tween.get(circle, {loop: false})
-                .to({x: 400}, 1000, createjs.Ease.getPowInOut(4))
-                .to({x: stage.getChildAt(posicion).x + (50 * posicion) + 30, y: stage.getChildAt(posicion).y + 50 }, 800, createjs.Ease.getPowInOut(2))
-                .call(mierda(posicion));
-            function mierda(posicion){
-                stage.getChildByName(posicion).strokeCmd.style = "red";
+            j = i;
+
+            for (i; i < 20; i++){
+                var circle = new createjs.Shape();
+                circle.graphics.beginFill("DeepSkyBlue").drawCircle(0, 0, 20);
+                circle.x = 15;
+                circle.y = 600;
+                circle.name = i + "";
+                stage.addChild(circle);
             }
+
+            
+            function jsHello(j, posicion) {
+                if (j == 20){
+                    return;
+                }else{
+                    setTimeout(function () {
+
+                        createjs.Tween.get(stage.getChildByName(j), {loop: false})
+                            .to({x: 400}, 1000, createjs.Ease.getPowInOut(4))
+                            .to({x: stage.getChildAt(posicion).x + (50 * posicion) + 30, y: stage.getChildAt(posicion).y +  75}, 800, createjs.Ease.getPowInOut(2))
+                            .call(mierda(posicion));
+                        function mierda(posicion){
+                            var tmp;
+                            tmp = stage.getChildByName(posicion);
+                            tmp.strokeCmd.style = "red";
+                        }
+                        jsHello(++j, ++posicion);
+
+                    }, 1000);
+                }
+            }
+
+            jsHello(10,0);
+
             createjs.Ticker.setFPS(60);
             createjs.Ticker.addEventListener("tick", stage);
-            
+
         }
-        
-        
+
 
     </script>
 
