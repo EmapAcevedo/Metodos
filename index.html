@@ -114,66 +114,69 @@
         }
 
         function init() {
-            var arreglositemas = new Array(10);
-            var stage = new createjs.Stage("demoCanvas");
+            var clientes;
+            var servidores;
             var i;
-            var j;
-            for (i = 0; i < 10; i++){
+            
+            clientes = 50;
+            servidores= 25;
+            
+            var arreglositemas = new Array(servidores);
+            var stage = new createjs.Stage("demoCanvas");
+            
+            for (i = 0; i < servidores; i++){
                 var rect = new createjs.Shape();
                 rect.strokeCmd = rect.graphics.beginFill("black").command;
-                rect.graphics.drawRect(10 + (50 * i), 10, 40, 40);
-                rect.x = 10 + (50 * i);
+                rect.graphics.drawRect(5+ 25 * i, 10, 25, 25);
+                rect.x = 5 + (20 * i);
                 rect.y = 10;
                 rect.name = i + "";
                 stage.addChild(rect);
             }
 
-            j = i;
-
-            for (i; i < 20; i++){
+            for (i = 0; i < clientes; i++){
                 var circle = new createjs.Shape();
-                circle.graphics.beginFill("DeepSkyBlue").drawCircle(0, 0, 20);
+                circle.graphics.beginFill("DeepSkyBlue").drawCircle(0, 0, 15);
                 circle.x = 15;
                 circle.y = 600;
                 circle.name = i + "";
                 stage.addChild(circle);
             }
 
-
-            function simulacion(j, posicion) {
-                if (j == 20){
+            function simulacion(cliente, server) {
+                if (cliente == (clientes + servidores)){
                     return;
                 }else{
                     setTimeout(function () {
-                        createjs.Tween.get(stage.getChildByName(j), {loop: false})
+                        createjs.Tween.get(stage.getChildByName(cliente), {loop: false})
                             .to({x: 400}, 1000, createjs.Ease.getPowInOut(4))
-                            .to({x: stage.getChildAt(posicion).x + (50 * posicion) + 30, y: stage.getChildAt(posicion).y +  75}, 800, createjs.Ease.getPowInOut(2))
-                            .call(espera(posicion));
-                        function espera(posicion){
+                            .to({x: stage.getChildAt(server).x + (25 * server) + 18, y: stage.getChildAt(server).y +  55}, 800, createjs.Ease.getPowInOut(2))
+                            .call(espera(server));
+                        function espera(server){
                             var tmp;
                             var stagetmp = stage;
-                            tmp = stage.getChildByName(posicion);
+                            tmp = stage.getChildByName(server);
                             setTimeout(function(){
                                 tmp.strokeCmd.style = "red";
                             }, 1500)
                             setTimeout(function(){
-                                j--;
-                                createjs.Tween.get(stage.getChildByName(j), {loop: false})
-                                    .to({x: stage.getChildAt(posicion).x + (50 * posicion) + 30, y: stage.getChildAt(posicion).y +  75}, 800, createjs.Ease.getPowInOut(2))
+                                --cliente;
+                                createjs.Tween.get(stage.getChildByName(cliente), {loop: false})
+                                    .to({x: stage.getChildAt(server).x + (25 * server) + 18, y: stage.getChildAt(server).y +  55}, 800, createjs.Ease.getPowInOut(2))
                                     .to({x: 50000, y: 5000}, 800, createjs.Ease.getPowInOut(2))
                                 .call(e());
                                 function e(){
-                                    tmp.strokeCmd.style = "black";
+                                    setTimeout(function(){
+                                        tmp.strokeCmd.style = "black";
+                                    },1000)
                                 }
-                            }, 3000)
+                            }, 2000)
                         }
-                        simulacion(++j, ++posicion);
-
+                        simulacion(++cliente, ++server);
                     }, 1000);
                 }
             }
-
-            simulacion(10,0);
+            simulacion(servidores,0);
 
             createjs.Ticker.setFPS(60);
             createjs.Ticker.addEventListener("tick", stage);
@@ -182,9 +185,6 @@
 
 
     </script>
-
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-
-
 </html>
