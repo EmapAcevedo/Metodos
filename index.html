@@ -117,13 +117,21 @@
             var clientes;
             var servidores;
             var i;
-            
+
+            lambda = document.getElementById("lambda").value;
+            miu = document.getElementById("miu").value;
+            m = document.getElementById("m").value;
+
             clientes = 50;
             servidores= 25;
-            
+
             var arreglositemas = new Array(servidores);
+            var x;
+            for (x = 0; x < servidores; x++){
+                arreglositemas[x] = 0;
+            }
             var stage = new createjs.Stage("demoCanvas");
-            
+
             for (i = 0; i < servidores; i++){
                 var rect = new createjs.Shape();
                 rect.strokeCmd = rect.graphics.beginFill("black").command;
@@ -144,6 +152,12 @@
             }
 
             function simulacion(cliente, server) {
+                var reloj;
+                if (server == 0){
+                    reloj = 1000;
+                }else {
+                    reloj = 4000;
+                }
                 if (cliente == (clientes + servidores)){
                     return;
                 }else{
@@ -158,24 +172,39 @@
                             tmp = stage.getChildByName(server);
                             setTimeout(function(){
                                 tmp.strokeCmd.style = "red";
+                                arreglositemas[server] = 1;
                             }, 1500)
                             setTimeout(function(){
                                 --cliente;
                                 createjs.Tween.get(stage.getChildByName(cliente), {loop: false})
                                     .to({x: stage.getChildAt(server).x + (25 * server) + 18, y: stage.getChildAt(server).y +  55}, 800, createjs.Ease.getPowInOut(2))
                                     .to({x: 50000, y: 5000}, 800, createjs.Ease.getPowInOut(2))
-                                .call(e());
+                                    .call(e());
                                 function e(){
                                     setTimeout(function(){
                                         tmp.strokeCmd.style = "black";
+                                        arreglositemas[server] = 0;
                                     },1000)
                                 }
                             }, 2000)
                         }
                         simulacion(++cliente, ++server);
-                    }, 1000);
+                    }, reloj);
                 }
             }
+
+
+            var j;
+            var posicion;
+            j = 0;
+            for (j; j < servidores; j++){
+
+                if (arreglositemas[j] == 0){
+                    posicion = j;
+                }
+            }
+            console.log(posicion);
+            //simulacion(++cliente, posicion);
             simulacion(servidores,0);
 
             createjs.Ticker.setFPS(60);
