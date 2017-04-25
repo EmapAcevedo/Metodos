@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="">
     <head>
         <meta charset="UTF-8">
@@ -51,50 +51,48 @@
         <canvas id="demoCanvas" width="1520%" height="650%" ></canvas>
     </body>
     <div id="meh">
-    <table class="table table-condensed">
-      <thead>
-        <tr>
-          <th>Resultado del modelo</th>
-        </tr>
-        <tr>
-          <th> Variable</th>
-          <th> Valor</th>
-        <tr>
-    </thead>
-    <tbody>
-      <tr class="active">
-        <td>P0</td>
-        <td id="P0">--- </td>
-      </tr>
-      <tr class="info">
-        <td>L</td>
-        <td id="L">--- </td>
-      </tr>
-      <tr class="active">
-        <td>W</td>
-        <td id="W">--- </td>
-      </tr>
-      <tr class="info">
-        <td>Lq</td>
-        <td id="Lq">--- </td>
-      </tr>
-      <tr class="active">
-        <td>Wq</td>
-        <td id="Wq">--- </td>
-      </tr>
-      <tr class="info">
-        <td>ρ</td>
-        <td id="rho">--- </td>
-      </tr>
-    </tbody>
-  </table>
-  </div>
+        <table class="table table-condensed">
+            <thead>
+                <tr>
+                    <th>Resultado del modelo</th>
+                </tr>
+                <tr>
+                    <th> Variable</th>
+                    <th> Valor</th>
+                <tr>
+            </thead>
+            <tbody>
+                <tr class="active">
+                    <td>P0</td>
+                    <td id="P0">--- </td>
+                </tr>
+                <tr class="info">
+                    <td>L</td>
+                    <td id="L">--- </td>
+                </tr>
+                <tr class="active">
+                    <td>W</td>
+                    <td id="W">--- </td>
+                </tr>
+                <tr class="info">
+                    <td>Lq</td>
+                    <td id="Lq">--- </td>
+                </tr>
+                <tr class="active">
+                    <td>Wq</td>
+                    <td id="Wq">--- </td>
+                </tr>
+                <tr class="info">
+                    <td>ρ</td>
+                    <td id="rho">--- </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
     <script>
-
         var lambda;
         var miu;
         var m;
-
         function rFact(num){
             if (num === 0){
                 return 1;
@@ -102,80 +100,59 @@
                 return num * rFact( num - 1 );
             }
         }
-
         function check(){
-          lambda = document.getElementById("lambda").value;
-          miu = document.getElementById("miu").value;
-          m = document.getElementById("m").value;
-
-          if(lambda>miu*m){
-            alert("Lambda no puede ser mayor a miu*m");
-          }
-          else {
-            document.getElementById("P0").innerHTML=p0(lambda,miu,m);
-            document.getElementById("L").innerHTML=l(lambda,miu,m);
-            document.getElementById("W").innerHTML=w(lambda,miu,m);
-            document.getElementById("Lq").innerHTML=lq(lambda,miu,m);
-            document.getElementById("Wq").innerHTML=wq(lambda,miu,m);
-            document.getElementById("rho").innerHTML=ro(lambda,miu,m);
-            init();
-          }
-
+            lambda = document.getElementById("lambda").value;
+            miu = document.getElementById("miu").value;
+            m = document.getElementById("m").value;
+            if(lambda>miu*m){
+                alert("Lambda no puede ser mayor a miu*m");
+            }
+            else {
+                document.getElementById("P0").innerHTML=p0(lambda,miu,m);
+                document.getElementById("L").innerHTML=l(lambda,miu,m);
+                document.getElementById("W").innerHTML=w(lambda,miu,m);
+                document.getElementById("Lq").innerHTML=lq(lambda,miu,m);
+                document.getElementById("Wq").innerHTML=wq(lambda,miu,m);
+                document.getElementById("rho").innerHTML=ro(lambda,miu,m);
+                init();
+            }
         }
-
-
         var p0 = function(lambda, miu, m){
             var sumatoria = 0;
             var suma;
             var suma2;
             var i;
-
             for(i = 0; i < m; i++){
                 suma = 1/rFact(i);
                 suma2 = Math.pow(lambda / miu, i);
                 sumatoria += (suma * suma2);
             }
-
-
             return 1 / (sumatoria + ((1/rFact(m)) * Math.pow(lambda/miu, m) * ((m * miu) / ((m * miu) - lambda))));
         }
-
         var l = function(lambda, miu, m){
             var division;
-
             division = ((lambda * miu) * Math.pow(lambda/miu, m) ) / ((rFact(m - 1)) * Math.pow((m * miu)- lambda, 2));
             return (division * p0(lambda,miu,m)) + (lambda / miu);
         }
-
         var w = function(lambda, miu, m){
-
             return l(lambda, miu, m) / lambda;
-
         }
-
         var lq = function(lambda, miu, m){
-
             return l(lambda, miu, m) - (lambda / miu);
-
         }
-
         var wq = function(lambda, miu, m){
-
             return w(lambda, miu, m) - (1/ miu);
-
         }
-
         var ro = function(lambda, miu, m){
             return lambda / (miu * m);
         }
-
         function init() {
+            var queue = [];
             var clientes;
             var servidores;
             var i;
 
-
-            clientes = 50;
+            clientes = 10;
             servidores= m;
 
             var arreglositemas = new Array(servidores);
@@ -183,15 +160,15 @@
             for (x = 0; x < servidores; x++){
                 arreglositemas[x] = 0;
             }
-            var stage = new createjs.Stage("demoCanvas");
 
+            var stage = new createjs.Stage("demoCanvas");
             for (i = 0; i < servidores; i++){
                 var rect = new createjs.Shape();
                 rect.strokeCmd = rect.graphics.beginFill("black").command;
                 rect.graphics.drawRect(5+ 25 * i, 10, 25, 25);
                 rect.x = 5 + (20 * i);
                 rect.y = 10;
-                rect.name = i + "";
+                rect.name = i + "s";
                 stage.addChild(rect);
             }
 
@@ -200,74 +177,65 @@
                 circle.graphics.beginFill("DeepSkyBlue").drawCircle(0, 0, 15);
                 circle.x = 15;
                 circle.y = 600;
-                circle.name = i + "";
+                circle.name = i + "c";
+                queue.push(i+"c");
                 stage.addChild(circle);
             }
 
-            function simulacion(cliente, server) {
-                var reloj;
-                if (server == 0){
-                    reloj = 1000;
-                }else {
-                    reloj = 1000;
-                }
-                if (cliente == (clientes + servidores)){
-                    return;
-                }else{
-                    setTimeout(function () {
-                        createjs.Tween.get(stage.getChildByName(cliente), {loop: false})
-                            .to({x: 400}, 1000, createjs.Ease.getPowInOut(4))
-                            .to({x: stage.getChildAt(server).x + (25 * server) + 18, y: stage.getChildAt(server).y +  55}, 800, createjs.Ease.getPowInOut(2))
-                            .call(espera(server));
-                        function espera(server){
-                            var tmp;
-                            var stagetmp = stage;
-                            tmp = stage.getChildByName(server);
-                            setTimeout(function(){
-                                tmp.strokeCmd.style = "red";
-                                arreglositemas[server] = 1;
-                            }, 1500)
-                            setTimeout(function(){
-                                --cliente;
-                                createjs.Tween.get(stage.getChildByName(cliente), {loop: false})
-                                    .to({x: stage.getChildAt(server).x + (25 * server) + 18, y: stage.getChildAt(server).y +  55}, 800, createjs.Ease.getPowInOut(2))
-                                    .to({x: 50000, y: 5000}, 800, createjs.Ease.getPowInOut(2))
-                                    .call(e());
-                                function e(){
-                                    setTimeout(function(){
-                                        tmp.strokeCmd.style = "black";
 
-                                        arreglositemas[server] = 0;
-                                    },1000)
-                                }
-                            }, 6000)
-                        }
-                        simulacion(++cliente, ++server);
-                    }, reloj);
-                }
+            function simulacion(cola, server, tiempo, totalclientes) {
+                var reloj =2000;
+                var cliente = cola.shift();
+                setTimeout(function () {
+                    createjs.Tween.get(stage.getChildByName(cliente))
+                        .to({x: 400}, 1000, createjs.Ease.getPowInOut(2))
+                        .to({x: stage.getChildAt(server).x + (25 * server) + 18, y: stage.getChildAt(server).y +  55}, 800, createjs.Ease.getPowInOut(2))
+                        .call(espera());
+                    function espera(){
+                        var tmp;
+                        var stagetmp = stage;
+                        tmp = stage.getChildByName(server + "s");
+                        setTimeout(function(){
+                            tmp.strokeCmd.style = "red";
+                            arreglositemas[server] = 1;
+                        }, 1500)
+                        setTimeout(function(){
+                            createjs.Tween.get(stage.getChildByName(cliente))
+                                .to({x: stage.getChildAt(server).x + (25 * server) + 18, y: stage.getChildAt(server).y +  55}, 800, createjs.Ease.getPowInOut(2))
+                                .to({x: 50000, y: 5000}, 800, createjs.Ease.getPowInOut(2))
+                                .call(e());
+                            function e(){
+                                setTimeout(function(){
+                                    tmp.strokeCmd.style = "black";
+                                    arreglositemas[server] = 0;
+                                },1000)
+                            }
+                        }, tiempo)
+                    }
+                    var posicion_random;
+                    posicion_random = Math.floor(Math.random() * (servidores - 0)) + 0;
+
+                    var nuevosclientes;
+                    nuevosclientes = Math.floor(Math.random()*(clientes - 0) + 0);
+                    var n;            
+                    for(n =0; n < nuevosclientes; n++){
+                        var circle = new createjs.Shape();
+                        circle.graphics.beginFill("DeepSkyBlue").drawCircle(0, 0, 15);
+                        circle.x = 15;
+                        circle.y = 600;
+                        circle.name = totalclientes + "c";
+                        cola.push(totalclientes+"c");
+                        stage.addChild(circle);
+                        totalclientes++;
+                    }
+                    console.log("posicion" + posicion_random);
+                    simulacion(cola, posicion_random, 1000, totalclientes);
+                }, reloj);
+
             }
-
-
-            var j;
-            var posicion;
-            j = 0;
-            for (j; j < servidores; j++){
-
-                if (arreglositemas[j] == 0){
-                    posicion = j;
-                }
-            }
-            console.log(posicion);
-            //simulacion(++cliente, posicion);
-            simulacion(servidores,0);
-
+            simulacion(queue,0,2000,i);
             createjs.Ticker.setFPS(60);
             createjs.Ticker.addEventListener("tick", stage);
-
         }
-
-
     </script>
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-
 </html>
