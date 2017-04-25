@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="">
     <head>
         <meta charset="UTF-8">
@@ -14,6 +14,7 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
         <!-- Latest compiled and minified JavaScript -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
         <link rel="stylesheet" type="text/css" href="style.css">
@@ -36,10 +37,10 @@
                 <ul class="nav navbar-nav">
                     <li class="active"><a href="#">Home</a></li>
                     <li><a href="#about">About</a></li>
-                    <li><input type="text" class="form-control center" placeholder="Llegadas - λ" aria-describedby="basic-addon1" id="lambda"> </li>
-                    <li><input type="text" class="form-control center" placeholder="Tiempo Servicio - μ" aria-describedby="basic-addon1" id="miu"></li>
-                    <li><input type="text" class="form-control center" placeholder="Num. Canales Abiertos - m" aria-describedby="basic-addon1" id="m"></li>
-                    <li><button type="button" class="btn btn-success" id="go" onclick="init();">Success</button></li>
+                    <li><input type="text" class="form-control center" placeholder="Llegadas - λ" aria-describedby="basic-addon1" id="lambda" onkeypress='return event.charCode >= 48 && event.charCode <= 57'> </li>
+                    <li><input type="text" class="form-control center" placeholder="Tiempo Servicio - μ" aria-describedby="basic-addon1" id="miu" onkeypress='return event.charCode >= 48 && event.charCode <= 57'></li>
+                    <li><input type="text" class="form-control center" placeholder="Num. Canales Abiertos - m" aria-describedby="basic-addon1" id="m" onkeypress='return event.charCode >= 48 && event.charCode <= 57'></li>
+                    <li><button type="button" class="btn btn-success" id="go" onclick="check();">Success</button></li>
 
 
                 </ul>
@@ -49,7 +50,45 @@
     <body>
         <canvas id="demoCanvas" width="1520%" height="650%" ></canvas>
     </body>
-
+    <div id="meh">
+    <table class="table table-condensed">
+      <thead>
+        <tr>
+          <th>Resultado del modelo</th>
+        </tr>
+        <tr>
+          <th> Variable</th>
+          <th> Valor</th>
+        <tr>
+    </thead>
+    <tbody>
+      <tr class="active">
+        <td>P0</td>
+        <td id="P0">--- </td>
+      </tr>
+      <tr class="info">
+        <td>L</td>
+        <td id="L">--- </td>
+      </tr>
+      <tr class="active">
+        <td>W</td>
+        <td id="W">--- </td>
+      </tr>
+      <tr class="info">
+        <td>Lq</td>
+        <td id="Lq">--- </td>
+      </tr>
+      <tr class="active">
+        <td>Wq</td>
+        <td id="Wq">--- </td>
+      </tr>
+      <tr class="info">
+        <td>ρ</td>
+        <td id="rho">--- </td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
     <script>
 
         var lambda;
@@ -57,16 +96,33 @@
         var m;
 
         function rFact(num){
-            if (num === 0){ 
-                return 1; 
-            }else{ 
-                return num * rFact( num - 1 ); 
+            if (num === 0){
+                return 1;
+            }else{
+                return num * rFact( num - 1 );
             }
         }
 
-        lambda = document.getElementById("lambda").value;
-        miu = document.getElementById("miu").value;
-        m = document.getElementById("m").value;
+        function check(){
+          lambda = document.getElementById("lambda").value;
+          miu = document.getElementById("miu").value;
+          m = document.getElementById("m").value;
+
+          if(lambda>miu*m){
+            alert("Lambda no puede ser mayor a miu*m");
+          }
+          else {
+            document.getElementById("P0").innerHTML=p0(lambda,miu,m);
+            document.getElementById("L").innerHTML=l(lambda,miu,m);
+            document.getElementById("W").innerHTML=w(lambda,miu,m);
+            document.getElementById("Lq").innerHTML=lq(lambda,miu,m);
+            document.getElementById("Wq").innerHTML=wq(lambda,miu,m);
+            document.getElementById("rho").innerHTML=ro(lambda,miu,m);
+            init();
+          }
+
+        }
+
 
         var p0 = function(lambda, miu, m){
             var sumatoria = 0;
@@ -87,7 +143,7 @@
         var l = function(lambda, miu, m){
             var division;
 
-            division = (((lambda * miu) * Math.pow(lambda / miu), m)) / ((rFact(m - 1)) * Math.pow((m * miu)- lambda, 2));
+            division = ((lambda * miu) * Math.pow(lambda/miu, m) ) / ((rFact(m - 1)) * Math.pow((m * miu)- lambda, 2));
             return (division * p0(lambda,miu,m)) + (lambda / miu);
         }
 
@@ -118,12 +174,9 @@
             var servidores;
             var i;
 
-            lambda = document.getElementById("lambda").value;
-            miu = document.getElementById("miu").value;
-            m = document.getElementById("m").value;
 
             clientes = 50;
-            servidores= 25;
+            servidores= m;
 
             var arreglositemas = new Array(servidores);
             var x;
@@ -156,7 +209,7 @@
                 if (server == 0){
                     reloj = 1000;
                 }else {
-                    reloj = 4000;
+                    reloj = 1000;
                 }
                 if (cliente == (clientes + servidores)){
                     return;
@@ -183,10 +236,11 @@
                                 function e(){
                                     setTimeout(function(){
                                         tmp.strokeCmd.style = "black";
+
                                         arreglositemas[server] = 0;
                                     },1000)
                                 }
-                            }, 2000)
+                            }, 6000)
                         }
                         simulacion(++cliente, ++server);
                     }, reloj);
@@ -215,5 +269,5 @@
 
     </script>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
 </html>
