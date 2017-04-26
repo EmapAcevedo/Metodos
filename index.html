@@ -50,11 +50,11 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12 col-lg-12">
-                <canvas id="demoCanvas"  width="2500" height="1850"></canvas>
+                <canvas id="demoCanvas"  width="1500" height="1850"></canvas>
             </div>
-            
+
         </div>
-        
+
     </div>
     <div id="meh">
         <table class="table table-condensed">
@@ -111,18 +111,9 @@
             miu = document.getElementById("miu").value;
             m = document.getElementById("m").value;
             var canvas = document.getElementsByTagName('canvas')[0];
-            if(m <= 10){
-                canvas.width = 2000;
-            }
-            if (10 < m <=30){
-                canvas.width = 2500;
-            }
-            if(30 < m <= 60){
-                canvas.width = 3000;
-            }
-            if(60 < m <= 100){
-                canvas.width = 4850;
-                canvas.height = 3000;
+
+            if (m > 10 && m <= 30){
+                canvas.width = 1500;
             }
             if(lambda>miu*m){
                 alert("Lambda no puede ser mayor a miu*m");
@@ -202,9 +193,10 @@
                 stage.addChild(circle);
             }
 
-
-            function simulacion(cola, server, tiempo, totalclientes) {
-                var reloj =2000;
+            function simulacion(cola, server, tiempo, totalclientes, ulti) {
+                var ultimo;
+                ultimo = ulti;
+                var reloj =500;
                 var cliente = cola.shift();
                 setTimeout(function () {
                     createjs.Tween.get(stage.getChildByName(cliente))
@@ -228,32 +220,46 @@
                                 setTimeout(function(){
                                     tmp.strokeCmd.style = "black";
                                     arreglositemas[server] = 0;
-                                },1000)
+                                },500)
                             }
                         }, tiempo)
                     }
-                    var posicion_random;
-                    posicion_random = Math.floor(Math.random() * (servidores - 0)) + 0;
-
-                    var nuevosclientes;
-                    nuevosclientes = Math.floor(Math.random()*(clientes - 0) + 0);
-                    var n;            
-                    for(n =0; n < nuevosclientes; n++){
-                        var circle = new createjs.Shape();
-                        circle.graphics.beginFill("DeepSkyBlue").drawCircle(0, 0, 15);
-                        circle.x = 15;
-                        circle.y = 600;
-                        circle.name = totalclientes + "c";
-                        cola.push(totalclientes+"c");
-                        stage.addChild(circle);
-                        totalclientes++;
+                    var numero_random_nuevos;
+                    numero_random_nuevos = Math.floor(Math.random() * (5 - 0)) + 0;
+                    if(numero_random_nuevos == 2){
+                        var nuevosclientes;
+                        nuevosclientes = Math.floor(Math.random()*(25 - 0) + 0);
+                        var n;            
+                        for(n =0; n < nuevosclientes; n++){
+                            var circle = new createjs.Shape();
+                            circle.graphics.beginFill("DeepSkyBlue").drawCircle(0, 0, 15);
+                            circle.x = 15;
+                            circle.y = 600;
+                            circle.name = totalclientes + "c";
+                            cola.push(totalclientes+"c");
+                            stage.addChild(circle);
+                            totalclientes++;
+                        }
                     }
-                    console.log("posicion" + posicion_random);
-                    simulacion(cola, posicion_random, 1000, totalclientes);
+                    var posicion_random;
+                    var m = 0;
+                    console.log(servidores);
+                    do {
+                        if(m == servidores){
+                            m = 0;
+                        }
+                        posicion_random = Math.floor(Math.random() * (servidores - 0)) + 0;
+                        m++;
+                        console.log()
+                    }
+                    while (arreglositemas[m] == 1 && posicion_random == ulti);
+                    ulti = posicion_random;
+                    console.log(posicion_random);
+                    simulacion(cola, posicion_random, 2000, totalclientes,ulti);
                 }, reloj);
 
             }
-            simulacion(queue,0,2000,i);
+            simulacion(queue,0,2000,i,25);
             createjs.Ticker.setFPS(60);
             createjs.Ticker.addEventListener("tick", stage);
         }
