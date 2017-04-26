@@ -118,7 +118,7 @@
         var m;
 
 
-
+        /** funcion check hace las validaciones de la simulacion y las variables mu, lambda y m**/
         function check(){
             lambda = document.getElementById("lambda").value;
             miu = document.getElementById("miu").value;
@@ -154,6 +154,7 @@
             }
         }
 
+        /** funcion init es la funcion que inicializa el canvas **/
         function init() {
             var queue = [];
             var clientes;
@@ -178,6 +179,8 @@
                 stage.addChild(rect);
             }
 
+            /** funcion generate, genera numero de clientes **/
+
             function generate(){
 
               var nuevosclientes;
@@ -201,7 +204,11 @@
 
 
 
-
+        	/** funcion simulacion simula la notacion kendall m/m/m 
+        	@constructor
+        	@params {int} - numero de clientes
+        	@params {int} - numero de servidores
+        	@params {int} - tiempo en milisegundos**/
             function simulacion(cliente, server, tiempo) {
 
                var reloj =250;
@@ -211,6 +218,7 @@
                         .to({x: 400}, 150, createjs.Ease.getPowInOut(2))
                         .to({x: stage.getChildAt(server).x + (25 * server) + 18, y: stage.getChildAt(server).y +  55}, 400, createjs.Ease.getPowInOut(2))
                         .call(espera());
+                    /** funcion espera es una funcion icognita para poner en espera al servidor**/
                     function espera(){
                       var tmp = stage.getChildByName(server + "s");
                         var stagetmp = stage;
