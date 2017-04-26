@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8">
+        <title>Metodos Cuantitativos</title>
+        <meta name="Author" content=""/>
+        <script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
+        <script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
+
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+        <link rel="stylesheet" type="text/css" href="style.css">
+
+        <!-- javascripts-->
+      <script type="text/javascript" src="modelo.js"></script>
+      <script type="text/javascript" src="maths.js"></script>
+
+    </head>
+
+    <!-- Static navbar -->
+    <nav class="navbar navbar-default navbar-static-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Teoria de Colas</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="#">Home</a></li>
+                    <li><a href="#about">Doc</a></li>
+                    <li><input type="text" class="form-control center" placeholder="Llegadas - λ" aria-describedby="basic-addon1" id="lambda" onkeypress='return event.charCode >= 48 && event.charCode <= 57 || event.keyCode == 46'> </li>
+                    <li><input type="text" class="form-control center" placeholder="Tiempo Servicio - μ" aria-describedby="basic-addon1" id="miu" onkeypress='return event.charCode >= 48 && event.charCode <= 57 || event.keyCode == 46'></li>
+                    <li><input type="text" class="form-control center" placeholder="Num. Canales Abiertos - m" aria-describedby="basic-addon1" id="m" onkeypress='return event.charCode >= 48 && event.charCode <= 57 || event.keyCode == 46'></li>
+                    <li><button type="button" class="btn btn-success go"  onclick="check();">Simular</button></li>
+                    <li><button type="button" class="btn btn-danger go" style="display:none" id="stop"  onclick="location.reload()">Cancelar</button></li>
+
+                </ul>
+            </div><!--/.nav-collapse -->
+        </div>
+    </nav>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12 col-lg-12">
+                <canvas id="demoCanvas"  width="1000" height="1850"></canvas>
+            </div>
+
+        </div>
+
+    </div>
+    <div id="meh">
+        <table class="table table-condensed">
+            <thead>
+                <tr>
+                    <th>Resultado del modelo</th>
+                </tr>
+                <tr>
+                    <th> Variable</th>
+                    <th> Valor</th>
+                <tr>
+            </thead>
+            <tbody>
+                <tr class="active">
+                    <td>P0</td>
+                    <td id="P0">--- </td>
+                </tr>
+                <tr class="info">
+                    <td>L</td>
+                    <td id="L">--- </td>
+                </tr>
+                <tr class="active">
+                    <td>W</td>
+                    <td id="W">--- </td>
+                </tr>
+                <tr class="info">
+                    <td>Lq</td>
+                    <td id="Lq">--- </td>
+                </tr>
+                <tr class="active">
+                    <td>Wq</td>
+                    <td id="Wq">--- </td>
+                </tr>
+                <tr class="info">
+                    <td>ρ</td>
+                    <td id="rho">--- </td>
+                </tr>
+
+                <tr class="">
+                    <th>Resultados de simulación</th>
+                </tr>
+
+                <tr class="">
+                    <th>llegando</th>
+                    <td id="cli">0<td>
+                </tr>
+                <tr class="">
+                    <th>en cola</th>
+                    <td id="cola">0<td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <script>
+        var lambda;
+        var miu;
+        var m;
+
+
+
+        function check(){
+            lambda = document.getElementById("lambda").value;
+            miu = document.getElementById("miu").value;
+            m = document.getElementById("m").value;
+            document.getElementById("stop").style.display = "block";
+            var canvas = document.getElementsByTagName('canvas')[0];
+            if(m < 11){
+              canvas.width = 1500;
+
+            }
+            if (10 < m &&   m <=30){
+                canvas.width = 2500;
+            }
+            if(30 < m && m<= 60){
+                canvas.width = 3000;
+            }
+            if(60 < m && m <= 100){
+                canvas.width = 4850;
+                canvas.height = 3000;
+            }
+            if(lambda>miu*m){
+                alert("Lambda no puede ser mayor a miu*m");
+            }
+            else {
+
+                document.getElementById("P0").innerHTML=p0(lambda,miu,m);
+                document.getElementById("L").innerHTML=l(lambda,miu,m);
+                document.getElementById("W").innerHTML=w(lambda,miu,m);
+                document.getElementById("Lq").innerHTML=lq(lambda,miu,m);
+                document.getElementById("Wq").innerHTML=wq(lambda,miu,m);
+                document.getElementById("rho").innerHTML=ro(lambda,miu,m);
+                init();
+            }
+        }
+
+        function init() {
+            var queue = [];
+            var clientes;
+            var servidores;
+            var i;
+            servidores= m;
+            clientes=0;
+            var arreglositemas = new Array(servidores);
+            var x;
+            for (x = 0; x < servidores; x++){
+                arreglositemas[x] = 0;
+            }
+
+            var stage = new createjs.Stage("demoCanvas");
+            for (i = 0; i < servidores; i++){
+                var rect = new createjs.Shape();
+                rect.strokeCmd = rect.graphics.beginFill("black").command;
+                rect.graphics.drawRect(5+ 25 * i, 10, 25, 25);
+                rect.x = 5 + (20 * i);
+                rect.y = 10;
+                rect.name = i + "s";
+                stage.addChild(rect);
+            }
+
+            function generate(){
+
+              var nuevosclientes;
+              nuevosclientes = poisson(lambda);
+                document.getElementById("cli").innerHTML=nuevosclientes;
+                document.getElementById("cola").innerHTML=queue.length;
+
+              //console.log("nuevos clientes "+ nuevosclientes);
+              var n;
+              for(n =0; n < nuevosclientes; n++){
+                  var circle = new createjs.Shape();
+                  circle.graphics.beginFill("DeepSkyBlue").drawCircle(0, 0, 15);
+                  circle.x = 15;
+                  circle.y = 600;
+                  circle.name = clientes + "c";
+                  queue.push(clientes+"c");
+                  stage.addChild(circle);
+                  clientes++;
+              }
+        }
+
+
+
+
+            function simulacion(cliente, server, tiempo) {
+
+               var reloj =250;
+               var tiempoencaja=tiempo*randomExponential(miu);
+                setTimeout(function () {
+                    createjs.Tween.get(stage.getChildByName(cliente))
+                        .to({x: 400}, 150, createjs.Ease.getPowInOut(2))
+                        .to({x: stage.getChildAt(server).x + (25 * server) + 18, y: stage.getChildAt(server).y +  55}, 400, createjs.Ease.getPowInOut(2))
+                        .call(espera());
+                    function espera(){
+                      var tmp = stage.getChildByName(server + "s");
+                        var stagetmp = stage;
+                        tmp.strokeCmd.style = "red";
+                        arreglositemas[server] = 1;
+                        createjs.Tween.get(stage.getChildByName(cliente))
+                            .to({x: stage.getChildAt(server).x + (25 * server) + 18, y: stage.getChildAt(server).y +  55}, 200, createjs.Ease.getPowInOut(2))
+                            .to({x: 50000, y: 5000}, 1000, createjs.Ease.getPowInOut(2))
+                        setTimeout(function(){
+                          tmp.strokeCmd.style = "black";
+                          arreglositemas[server] = 0;
+                        }, tiempoencaja)
+                    }
+                    document.getElementById("cola").innerHTML=queue.length;
+                    //console.log("posicion" + posicion_random);
+                    //console.log("size" + queue.length);
+                    //simulacion( queue.shift(), posicion_random, 1000);
+                }, reloj);
+
+           }
+            generate();
+            setInterval(generate, lambda*1000);
+            setInterval(function() {
+
+              if(queue.length>0){
+                var posicion_random;
+                posicion_random = Math.floor(Math.random() * (servidores - 0)) + 0;
+                if(arreglositemas[posicion_random]==0){
+              simulacion(queue.shift(),posicion_random,1000)
+                /*var tmp = stage.getChildByName(posicion_random + "s");
+                tmp.strokeCmd.style = "black";
+                arreglositemas[posicion_random] = 0;*/
+              }
+             }
+
+           },(w(lambda,miu,m)+1)*300);
+            createjs.Ticker.setFPS(60);
+            createjs.Ticker.addEventListener("tick", stage);
+        }
+    </script>
+</html>
