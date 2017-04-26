@@ -19,6 +19,10 @@
 
         <link rel="stylesheet" type="text/css" href="style.css">
 
+        <!-- javascripts-->
+      <script type="text/javascript" src="modelo.js"></script>
+      <script type="text/javascript" src="maths.js"></script>
+
     </head>
 
     <!-- Static navbar -->
@@ -36,20 +40,26 @@
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li class="active"><a href="#">Home</a></li>
-                    <li><a href="#about">About</a></li>
-                    <li><input type="text" class="form-control center" placeholder="Llegadas - λ" aria-describedby="basic-addon1" id="lambda" onkeypress='return event.charCode >= 48 && event.charCode <= 57'> </li>
-                    <li><input type="text" class="form-control center" placeholder="Tiempo Servicio - μ" aria-describedby="basic-addon1" id="miu" onkeypress='return event.charCode >= 48 && event.charCode <= 57'></li>
-                    <li><input type="text" class="form-control center" placeholder="Num. Canales Abiertos - m" aria-describedby="basic-addon1" id="m" onkeypress='return event.charCode >= 48 && event.charCode <= 57'></li>
-                    <li><button type="button" class="btn btn-success" id="go" onclick="check();">Success</button></li>
-
+                    <li><a href="#about">Doc</a></li>
+                    <li><input type="text" class="form-control center" placeholder="Llegadas - λ" aria-describedby="basic-addon1" id="lambda" onkeypress='return event.charCode >= 48 && event.charCode <= 57 || event.keyCode == 46'> </li>
+                    <li><input type="text" class="form-control center" placeholder="Tiempo Servicio - μ" aria-describedby="basic-addon1" id="miu" onkeypress='return event.charCode >= 48 && event.charCode <= 57 || event.keyCode == 46'></li>
+                    <li><input type="text" class="form-control center" placeholder="Num. Canales Abiertos - m" aria-describedby="basic-addon1" id="m" onkeypress='return event.charCode >= 48 && event.charCode <= 57 || event.keyCode == 46'></li>
+                    <li><button type="button" class="btn btn-success go"  onclick="check();">Simular</button></li>
+                    <li><button type="button" class="btn btn-danger go" style="display:none" id="stop"  onclick="location.reload()">Cancelar</button></li>
 
                 </ul>
             </div><!--/.nav-collapse -->
         </div>
     </nav>
-    <body>
-        <canvas id="demoCanvas" width="1520%" height="650%" ></canvas>
-    </body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12 col-lg-12">
+                <canvas id="demoCanvas"  width="1000" height="1850"></canvas>
+            </div>
+
+        </div>
+
+    </div>
     <div id="meh">
         <table class="table table-condensed">
             <thead>
@@ -86,6 +96,19 @@
                     <td>ρ</td>
                     <td id="rho">--- </td>
                 </tr>
+
+                <tr class="">
+                    <th>Resultados de simulación</th>
+                </tr>
+
+                <tr class="">
+                    <th>llegando</th>
+                    <td id="cli">0<td>
+                </tr>
+                <tr class="">
+                    <th>en cola</th>
+                    <td id="cola">0<td>
+                </tr>
             </tbody>
         </table>
     </div>
@@ -93,31 +116,6 @@
         var lambda;
         var miu;
         var m;
-        function rFact(num){
-            if (num === 0){
-                return 1;
-            }else{
-                return num * rFact( num - 1 );
-            }
-        }
-
-      var poisson=  function (expectvalue){
-            var n = 0;
-          	limit = Math.exp(-expectvalue);
-          	x = Math.random();
-            while(x > limit){
-                  n++;
-                  x *= Math.random();;
-            }
-            return n;
-      }
-
-      function randomExponential(rate) {
-          rate = rate || 1;
-          var U = Math.random();
-          return -Math.log(U)/rate;
-      }
-
 
 
 
@@ -125,6 +123,22 @@
             lambda = document.getElementById("lambda").value;
             miu = document.getElementById("miu").value;
             m = document.getElementById("m").value;
+            document.getElementById("stop").style.display = "block";
+            var canvas = document.getElementsByTagName('canvas')[0];
+            if(m < 11){
+              canvas.width = 1500;
+
+            }
+            if (10 < m &&   m <=30){
+                canvas.width = 2500;
+            }
+            if(30 < m && m<= 60){
+                canvas.width = 3000;
+            }
+            if(60 < m && m <= 100){
+                canvas.width = 4850;
+                canvas.height = 3000;
+            }
             if(lambda>miu*m){
                 alert("Lambda no puede ser mayor a miu*m");
             }
@@ -139,44 +153,14 @@
                 init();
             }
         }
-        var p0 = function(lambda, miu, m){
-            var sumatoria = 0;
-            var suma;
-            var suma2;
-            var i;
-            for(i = 0; i < m; i++){
-                suma = 1/rFact(i);
-                suma2 = Math.pow(lambda / miu, i);
-                sumatoria += (suma * suma2);
-            }
-            return 1 / (sumatoria + ((1/rFact(m)) * Math.pow(lambda/miu, m) * ((m * miu) / ((m * miu) - lambda))));
-        }
-        var l = function(lambda, miu, m){
-            var division;
-            division = ((lambda * miu) * Math.pow(lambda/miu, m) ) / ((rFact(m - 1)) * Math.pow((m * miu)- lambda, 2));
-            return (division * p0(lambda,miu,m)) + (lambda / miu);
-        }
-        var w = function(lambda, miu, m){
-            return l(lambda, miu, m) / lambda;
-        }
-        var lq = function(lambda, miu, m){
-            return l(lambda, miu, m) - (lambda / miu);
-        }
-        var wq = function(lambda, miu, m){
-            return w(lambda, miu, m) - (1/ miu);
-        }
-        var ro = function(lambda, miu, m){
-            return lambda / (miu * m);
-        }
+
         function init() {
             var queue = [];
             var clientes;
             var servidores;
             var i;
-
-            clientes = 10;
             servidores= m;
-
+            clientes=0;
             var arreglositemas = new Array(servidores);
             var x;
             for (x = 0; x < servidores; x++){
@@ -194,68 +178,75 @@
                 stage.addChild(rect);
             }
 
-            for (i = 0; i < clientes; i++){
-                var circle = new createjs.Shape();
-                circle.graphics.beginFill("DeepSkyBlue").drawCircle(0, 0, 15);
-                circle.x = 15;
-                circle.y = 600;
-                circle.name = i + "c";
-                queue.push(i+"c");
-                stage.addChild(circle);
-            }
+            function generate(){
+
+              var nuevosclientes;
+              nuevosclientes = poisson(lambda);
+                document.getElementById("cli").innerHTML=nuevosclientes;
+                document.getElementById("cola").innerHTML=queue.length;
+
+              //console.log("nuevos clientes "+ nuevosclientes);
+              var n;
+              for(n =0; n < nuevosclientes; n++){
+                  var circle = new createjs.Shape();
+                  circle.graphics.beginFill("DeepSkyBlue").drawCircle(0, 0, 15);
+                  circle.x = 15;
+                  circle.y = 600;
+                  circle.name = clientes + "c";
+                  queue.push(clientes+"c");
+                  stage.addChild(circle);
+                  clientes++;
+              }
+        }
 
 
-            function simulacion(cliente, server, tiempo, totalclientes) {
-                var reloj =2000;
+
+
+            function simulacion(cliente, server, tiempo) {
+
+               var reloj =250;
+               var tiempoencaja=tiempo*randomExponential(miu);
                 setTimeout(function () {
                     createjs.Tween.get(stage.getChildByName(cliente))
-                        .to({x: 400}, 1000, createjs.Ease.getPowInOut(2))
-                        .to({x: stage.getChildAt(server).x + (25 * server) + 18, y: stage.getChildAt(server).y +  55}, 800, createjs.Ease.getPowInOut(2))
+                        .to({x: 400}, 150, createjs.Ease.getPowInOut(2))
+                        .to({x: stage.getChildAt(server).x + (25 * server) + 18, y: stage.getChildAt(server).y +  55}, 400, createjs.Ease.getPowInOut(2))
                         .call(espera());
                     function espera(){
-                        var tmp;
+                      var tmp = stage.getChildByName(server + "s");
                         var stagetmp = stage;
-                        tmp = stage.getChildByName(server + "s");
+                        tmp.strokeCmd.style = "red";
+                        arreglositemas[server] = 1;
+                        createjs.Tween.get(stage.getChildByName(cliente))
+                            .to({x: stage.getChildAt(server).x + (25 * server) + 18, y: stage.getChildAt(server).y +  55}, 200, createjs.Ease.getPowInOut(2))
+                            .to({x: 50000, y: 5000}, 1000, createjs.Ease.getPowInOut(2))
                         setTimeout(function(){
-                            tmp.strokeCmd.style = "red";
-                            arreglositemas[server] = 1;
-                        }, 1500)
-                        setTimeout(function(){
-                            createjs.Tween.get(stage.getChildByName(cliente))
-                                .to({x: stage.getChildAt(server).x + (25 * server) + 18, y: stage.getChildAt(server).y +  55}, 800, createjs.Ease.getPowInOut(2))
-                                .to({x: 50000, y: 5000}, 1000, createjs.Ease.getPowInOut(2))
-                                .call(e());
-                            function e(){
-                                setTimeout(function(){
-                                    tmp.strokeCmd.style = "black";
-                                    arreglositemas[server] = 0;
-                                },1000)
-                            }
-                        }, tiempo)
+                          tmp.strokeCmd.style = "black";
+                          arreglositemas[server] = 0;
+                        }, tiempoencaja)
                     }
-                    var posicion_random;
-                    posicion_random = Math.floor(Math.random() * (servidores - 0)) + 0;
-
-                    var nuevosclientes;
-                    nuevosclientes = Math.floor(Math.random()*(clientes - 0) + 0);
-                    var n;
-                    for(n =0; n < nuevosclientes; n++){
-                        var circle = new createjs.Shape();
-                        circle.graphics.beginFill("DeepSkyBlue").drawCircle(0, 0, 15);
-                        circle.x = 15;
-                        circle.y = 600;
-                        circle.name = totalclientes + "c";
-                        queue.push(totalclientes+"c");
-                        stage.addChild(circle);
-                        totalclientes++;
-                    }
-                    console.log("posicion" + posicion_random);
-                    console.log("size" + queue.length);
-                    simulacion( queue.shift(), posicion_random, 1000, totalclientes);
+                    document.getElementById("cola").innerHTML=queue.length;
+                    //console.log("posicion" + posicion_random);
+                    //console.log("size" + queue.length);
+                    //simulacion( queue.shift(), posicion_random, 1000);
                 }, reloj);
 
-            }
-            simulacion(queue.shift(),0,2000,i);
+           }
+            generate();
+            setInterval(generate, lambda*1000);
+            setInterval(function() {
+
+              if(queue.length>0){
+                var posicion_random;
+                posicion_random = Math.floor(Math.random() * (servidores - 0)) + 0;
+                if(arreglositemas[posicion_random]==0){
+              simulacion(queue.shift(),posicion_random,1000)
+                /*var tmp = stage.getChildByName(posicion_random + "s");
+                tmp.strokeCmd.style = "black";
+                arreglositemas[posicion_random] = 0;*/
+              }
+             }
+
+           },(w(lambda,miu,m)+1)*300);
             createjs.Ticker.setFPS(60);
             createjs.Ticker.addEventListener("tick", stage);
         }
