@@ -100,6 +100,27 @@
                 return num * rFact( num - 1 );
             }
         }
+
+      var poisson=  function (expectvalue){
+            var n = 0;
+          	limit = Math.exp(-expectvalue);
+          	x = Math.random();
+            while(x > limit){
+                  n++;
+                  x *= Math.random();;
+            }
+            return n;
+      }
+
+      function randomExponential(rate) {
+          rate = rate || 1;
+          var U = Math.random();
+          return -Math.log(U)/rate;
+      }
+
+
+
+
         function check(){
             lambda = document.getElementById("lambda").value;
             miu = document.getElementById("miu").value;
@@ -108,6 +129,7 @@
                 alert("Lambda no puede ser mayor a miu*m");
             }
             else {
+
                 document.getElementById("P0").innerHTML=p0(lambda,miu,m);
                 document.getElementById("L").innerHTML=l(lambda,miu,m);
                 document.getElementById("W").innerHTML=w(lambda,miu,m);
@@ -183,9 +205,8 @@
             }
 
 
-            function simulacion(cola, server, tiempo, totalclientes) {
+            function simulacion(cliente, server, tiempo, totalclientes) {
                 var reloj =2000;
-                var cliente = cola.shift();
                 setTimeout(function () {
                     createjs.Tween.get(stage.getChildByName(cliente))
                         .to({x: 400}, 1000, createjs.Ease.getPowInOut(2))
@@ -202,7 +223,7 @@
                         setTimeout(function(){
                             createjs.Tween.get(stage.getChildByName(cliente))
                                 .to({x: stage.getChildAt(server).x + (25 * server) + 18, y: stage.getChildAt(server).y +  55}, 800, createjs.Ease.getPowInOut(2))
-                                .to({x: 50000, y: 5000}, 800, createjs.Ease.getPowInOut(2))
+                                .to({x: 50000, y: 5000}, 1000, createjs.Ease.getPowInOut(2))
                                 .call(e());
                             function e(){
                                 setTimeout(function(){
@@ -217,23 +238,24 @@
 
                     var nuevosclientes;
                     nuevosclientes = Math.floor(Math.random()*(clientes - 0) + 0);
-                    var n;            
+                    var n;
                     for(n =0; n < nuevosclientes; n++){
                         var circle = new createjs.Shape();
                         circle.graphics.beginFill("DeepSkyBlue").drawCircle(0, 0, 15);
                         circle.x = 15;
                         circle.y = 600;
                         circle.name = totalclientes + "c";
-                        cola.push(totalclientes+"c");
+                        queue.push(totalclientes+"c");
                         stage.addChild(circle);
                         totalclientes++;
                     }
                     console.log("posicion" + posicion_random);
-                    simulacion(cola, posicion_random, 1000, totalclientes);
+                    console.log("size" + queue.length);
+                    simulacion( queue.shift(), posicion_random, 1000, totalclientes);
                 }, reloj);
 
             }
-            simulacion(queue,0,2000,i);
+            simulacion(queue.shift(),0,2000,i);
             createjs.Ticker.setFPS(60);
             createjs.Ticker.addEventListener("tick", stage);
         }
