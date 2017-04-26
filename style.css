@@ -10,9 +10,35 @@
     right: 1%;
 }
 
+#demoCanvas { 
+    display: block;
+    position: absolute;
+    background-color: rgba(158, 167, 184, 0.2);
+    overflow:scroll;
+    width: 100%;
+    height: auto;
+}
+
+
+.center {
+    margin-top: 4%;
+}
+
+#go {
+    position: fixed;
+    top: 1%;
+    right: 1%;
+}
+
 
 #meh{
   position: fixed;
   right: 5%;
   bottom: 5%;
+}
+
+#plano {
+  margin: 0 auto;
+  display: block;
+  border: 1px solid #d9d9d9;
 }

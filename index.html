@@ -50,7 +50,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12 col-lg-12">
-                <canvas id="demoCanvas"  width="3000" height="3000"></canvas>
+                <canvas id="demoCanvas"  width="2500" height="1850"></canvas>
             </div>
             
         </div>
@@ -110,6 +110,20 @@
             lambda = document.getElementById("lambda").value;
             miu = document.getElementById("miu").value;
             m = document.getElementById("m").value;
+            var canvas = document.getElementsByTagName('canvas')[0];
+            if(m <= 10){
+                canvas.width = 2000;
+            }
+            if (10 < m <=30){
+                canvas.width = 2500;
+            }
+            if(30 < m <= 60){
+                canvas.width = 3000;
+            }
+            if(60 < m <= 100){
+                canvas.width = 4850;
+                canvas.height = 3000;
+            }
             if(lambda>miu*m){
                 alert("Lambda no puede ser mayor a miu*m");
             }
